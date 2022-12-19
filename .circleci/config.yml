@@ -1,0 +1,9 @@
+version: 1
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.5.7-node-browsers
+        # environment:
+        #   RAILS_ENV: test
+        #   TZ: /usr/share/zoneinfo/Asia/Tokyo
+        #   DB_HOST: 127.0.0.1
