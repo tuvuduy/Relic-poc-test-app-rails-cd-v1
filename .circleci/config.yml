@@ -1,28 +1,30 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/configuration-reference
+version: 2.1
+
+# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
+# See: https://circleci.com/docs/orb-intro/
+orbs:
+  ruby: circleci/ruby@2.0.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/configuration-reference/#jobs
+jobs:
+  build:
+    docker:
+      - image: cimg/ruby:3.1.0
+    executor: ruby/default
+    steps:
+      - checkout
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/install-deps
+
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  version: 2
-  build-test-and-approval-deploy:
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build:
-        docker:
-          - image: cimg/php:7.1 # The primary container where steps are run
-          - image: cimg/mysql:8.0
-            environment:
-              MYSQL_ROOT_PASSWORD: rootpw
-              MYSQL_DATABASE: test_db
-              MYSQL_USER: user
-              MYSQL_PASSWORD: passw0rd
-      - test1: # your custom job; runs test suite 1
-          requires: # test1 will not run until the `build` job is completed.
-            - build
-      - test2: # another custom job; runs test suite 2,
-          requires: # test2 is dependent on the success of job `test1`
-            - test1
-      - hold: # <<< A job that will require manual approval in the CircleCI web application.
-          type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
-          requires: # We only run the "hold" job when test2 has succeeded
-           - test2
-      # On approval of the `hold` job, any successive job that requires the `hold` job will run.
-      # In this case, a user is manually triggering the deploy job.
-      - deploy:
-          requires:
-            - hold
+      - build
