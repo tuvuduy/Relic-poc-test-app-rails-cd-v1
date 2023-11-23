@@ -62,6 +62,7 @@ jobs:
       #     name: Rails webpack
       #     command: |
       #       bundle exec bin/webpack
+
   test:
   deploy:
 workflows:
